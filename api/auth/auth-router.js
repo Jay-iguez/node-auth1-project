@@ -2,6 +2,7 @@
 // middleware functions from `auth-middleware.js`. You will need them here!
 const { checkUsernameFree, checkUsernameExists, checkPasswordLength } = require('../auth/auth-middleware')
 const Users_model = require('../users/users-model')
+const bcrypt = require('bcryptjs')
 const express = require('express')
 const router = express.Router()
 
@@ -37,6 +38,28 @@ router.post('/register', [checkUsernameFree, checkUsernameExists, checkPasswordL
   }
  */
 
+  router.post('/login', async (req, res, next) => {
+    try {
+      const {password, username} = req.body
+
+      Users_model.findBy({username: username})
+        .then(user => {
+          if (user && bcrypt.compareSync(password, user.password)){
+            req.session.chocolatechip = user
+            res.status(200).json({
+              message: "Welcome " + user.username + "!"
+            })
+          } else {
+            next({status: 401, message: "Invalid credentials"})
+          }
+        })
+        .catch(err => {
+          next({status: 500, message: "Error in comparing passwords"})
+        })
+    } catch(err) {
+      next({status: 500, message: "Error in logging in: " + err.message})
+    }
+  })
 
 /**
   2 [POST] /api/auth/login { "username": "sue", "password": "1234" }

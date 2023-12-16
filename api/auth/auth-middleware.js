@@ -36,7 +36,7 @@ function checkUsernameFree(req, res, next) {
       }
     })
     .catch(err => {
-      console.error(err)
+      next({status: 500, message: "Error in checking username"})
     })
 
 }

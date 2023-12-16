@@ -19,7 +19,7 @@ const auth_routes = require('./auth/auth-router')
  */
 
 const session_config = {
-  name: "canine",
+  name: "chocolatechip",
   secret: 'all dogs go to heaven',
   cookie: {
     maxAge: 1000 * 30,
