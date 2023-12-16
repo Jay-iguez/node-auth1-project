@@ -9,7 +9,7 @@ const Users_model = require('../users/users-model')
   }
 */
 function restricted(req, res, next) {
-  if (req.session && req.session.user) {
+  if (req.session && req.session.chocolatechip) {
     next()
   } else {
     next({status: 401, message: 'You shall not pass!'})
@@ -36,7 +36,7 @@ function checkUsernameFree(req, res, next) {
       }
     })
     .catch(err => {
-      next({status: 500, message: "Error in checking username"})
+      next({status: 500, message: "Error in checking username: " + err.message})
     })
 
 }

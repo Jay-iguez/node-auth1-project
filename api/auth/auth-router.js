@@ -54,7 +54,7 @@ router.post('/register', [checkUsernameFree, checkUsernameExists, checkPasswordL
           }
         })
         .catch(err => {
-          next({status: 500, message: "Error in comparing passwords"})
+          next({status: 500, message: "Error in comparing passwords: " + err})
         })
     } catch(err) {
       next({status: 500, message: "Error in logging in: " + err.message})
@@ -77,6 +77,23 @@ router.post('/register', [checkUsernameFree, checkUsernameExists, checkPasswordL
   }
  */
 
+  router.get('/logout', async (req, res, next) => {
+    try {
+      if (req.session && req.session.chocolatechip){
+        req.session.destroy(err => {
+          if (err) {
+            res.status(200).json({message: "failed to log out: " + err.message})
+          } else {
+            res.status(200).json({message: "logged out"})
+          }
+        })
+      } else {
+        res.status(200).json({message: "no session"})
+      }
+    } catch(err) {
+      next({status: 500, message: "Error in logging out: " + err.message})
+    }
+  })
 
 /**
   3 [GET] /api/auth/logout
