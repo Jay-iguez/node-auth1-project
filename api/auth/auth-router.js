@@ -1,13 +1,17 @@
 // Require `checkUsernameFree`, `checkUsernameExists` and `checkPasswordLength`
 // middleware functions from `auth-middleware.js`. You will need them here!
+const { checkUsernameFree, checkUsernameExists, checkPasswordLength } = require('../auth/auth-middleware')
+const Users_model = require('../users/users-model')
 const express = require('express')
 const router = express.Router()
 
-router.post('/auth/register', async (req, res, next) => {
+router.post('/register', [checkUsernameFree, checkUsernameExists, checkPasswordLength], async (req, res, next) => {
   try {
-    console.log('hey')
-  } catch(err) {
-    next({status: 500, message: "Error in posting new user: " + err.message})
+    const new_user = await Users_model.add(req.body)
+
+    res.status(200).json(new_user)
+  } catch (err) {
+    next({ status: 500, message: "Error in posting new user: " + err.message })
   }
 })
 /**
@@ -67,6 +71,6 @@ router.post('/auth/register', async (req, res, next) => {
   }
  */
 
-  module.exports = router
- 
+module.exports = router
+
 // Don't forget to add the router to the `exports` object so it can be required in other modules

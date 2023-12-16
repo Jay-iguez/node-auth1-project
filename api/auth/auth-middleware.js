@@ -29,7 +29,11 @@ function checkUsernameFree(req, res, next) {
 
   Users_model.findBy({username: username})
     .then(res => {
-      console.log(res)
+      if (res) {
+        next({status: 422, message: "Username taken"})
+      } else {
+        next()
+      }
     })
     .catch(err => {
       console.error(err)
@@ -48,13 +52,11 @@ function checkUsernameFree(req, res, next) {
 function checkUsernameExists(req, res, next) {
   const {username} = req.body
 
-  Users_model.findBy({username: username})
-    .then(res => {
-      console.log(res)
-    })
-    .catch(err => [
-      console.error(err)
-    ])
+  if (username && username !== "") {
+    next()
+  } else {
+    next({status: 401, message: "Invalid credentials"})
+  }
 }
 
 /*
@@ -68,7 +70,7 @@ function checkUsernameExists(req, res, next) {
 function checkPasswordLength(req, res, next) {
   const {password} = req.body
 
-  if (!password && password.length <= 3){
+  if (!password || password.length < 3){
     next({status: 422, message: "Password must be longer than 3 chars"})
   } else {
     next()
